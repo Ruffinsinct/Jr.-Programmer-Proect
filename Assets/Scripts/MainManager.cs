@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class MainManager : MonoBehaviour
 {
@@ -11,31 +12,45 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public GameObject titleScreen;
     public GameObject GameOverText;
+    public Button startButton;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
+    public bool isGameActive;
 
     
     // Start is called before the first frame update
     void Start()
     {
+        while(isGameActive)
+        {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
-        for (int i = 0; i < LineCount; ++i)
-        {
-            for (int x = 0; x < perLine; ++x)
+            int[] pointCountArray = new [] {1,1,2,2,5,5};
+            for (int i = 0; i < LineCount; ++i)
             {
+                for (int x = 0; x < perLine; ++x)
+                {
                 Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
                 var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
+                }
             }
         }
+    }
+
+     public void StartGame()
+    { 
+        isGameActive = true;
+        
+        titleScreen.SetActive(false);
+
     }
 
     private void Update()
@@ -73,4 +88,6 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
+   
 }
