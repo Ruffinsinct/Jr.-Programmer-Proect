@@ -15,9 +15,12 @@ public class MainManager : MonoBehaviour
     public GameObject titleScreen;
     public GameObject GameOverText;
     public Button startButton;
+    public Text bestScoreText;
     
     private bool m_Started = false;
     private int m_Points;
+    private int highScore;
+    private string highScoreKey = "HighScore";
     
     private bool m_GameOver = false;
     public bool isGameActive;
@@ -26,8 +29,11 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        while(isGameActive)
-        {
+        highScore = PlayerPrefs.GetInt(highScoreKey, 0);
+
+        string playerName = PlayerPrefs.GetString("PlayerName");
+        bestScoreText.text = "Best Score: " +  playerName  +  highScore;
+        
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -42,16 +48,10 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
                 }
             }
-        }
-    }
-
-     public void StartGame()
-    { 
-        isGameActive = true;
         
-        titleScreen.SetActive(false);
-
     }
+
+    
 
     private void Update()
     {
@@ -75,12 +75,23 @@ public class MainManager : MonoBehaviour
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
+    
     }
 
     void AddPoint(int point)
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+        
+
+        if(m_Points > highScore)
+        {
+            highScore = m_Points;
+            PlayerPrefs.SetInt(highScoreKey, highScore);
+            PlayerPrefs.Save();
+        
+        }
+        
     }
 
     public void GameOver()
@@ -88,6 +99,8 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
+  
 
    
 }
